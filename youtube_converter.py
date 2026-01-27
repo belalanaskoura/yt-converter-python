@@ -1,7 +1,3 @@
-"""
-YouTube to MP3/MP4 Converter
-Requires: pip install yt-dlp
-"""
 
 import yt_dlp
 import os

@@ -5,7 +5,6 @@ Requires: pip install yt-dlp customtkinter
 
 import customtkinter as ctk
 import yt_dlp
-import os
 import threading
 from pathlib import Path
 from tkinter import filedialog, messagebox
