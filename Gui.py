@@ -13,13 +13,12 @@ from tkinter import filedialog, messagebox
 class YouTubeConverterGUI:
     def __init__(self):
         self.window = ctk.CTk()
-        self.window.title("YouTube Converter")
-        self.window.geometry("500x480")
+        self.window.title("YouTube Downloader")
+        self.window.geometry("520x500")
         self.window.resizable(False, False)
         
-        # Set theme
+        # YouTube color scheme
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
         
         self.output_dir = Path("downloads")
         self.output_dir.mkdir(exist_ok=True)
@@ -29,127 +28,218 @@ class YouTubeConverterGUI:
         self.setup_ui()
         
     def setup_ui(self):
-        # Main container
-        main_frame = ctk.CTkFrame(self.window)
-        main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+        # Header with YouTube red accent
+        header = ctk.CTkFrame(self.window, fg_color="#282828", corner_radius=0)
+        header.pack(fill="x")
         
-        # Title
-        title = ctk.CTkLabel(
-            main_frame, 
-            text="YouTube Converter",
-            font=ctk.CTkFont(size=20, weight="bold")
-        )
-        title.pack(pady=(0, 15))
+        header_content = ctk.CTkFrame(header, fg_color="transparent")
+        header_content.pack(pady=18)
         
-        # URL Input
-        ctk.CTkLabel(main_frame, text="URL:", font=ctk.CTkFont(size=12)).pack(anchor="w", pady=(0, 3))
-        self.url_entry = ctk.CTkEntry(main_frame, placeholder_text="https://youtube.com/watch?v=...")
-        self.url_entry.pack(fill="x", pady=(0, 12))
+        # YouTube-style logo/title
+        title_frame = ctk.CTkFrame(header_content, fg_color="transparent")
+        title_frame.pack()
         
-        # Format and Quality in one row
-        options_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        options_frame.pack(fill="x", pady=(0, 12))
+        ctk.CTkLabel(
+            title_frame,
+            text="▶",
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color="#FF0000"
+        ).pack(side="left", padx=(0, 8))
         
-        # Format Selection (Left)
-        format_container = ctk.CTkFrame(options_frame, fg_color="transparent")
-        format_container.pack(side="left", fill="both", expand=True, padx=(0, 5))
-        
-        ctk.CTkLabel(format_container, text="Format:", font=ctk.CTkFont(size=12)).pack(anchor="w", pady=(0, 3))
-        
-        self.format_var = ctk.StringVar(value="MP3")
-        format_buttons = ctk.CTkFrame(format_container, fg_color="transparent")
-        format_buttons.pack(fill="x")
-        
-        ctk.CTkRadioButton(
-            format_buttons, 
-            text="MP3", 
-            variable=self.format_var, 
-            value="MP3",
-            command=self.update_quality_options
-        ).pack(side="left", padx=(0, 10))
-        
-        ctk.CTkRadioButton(
-            format_buttons, 
-            text="MP4", 
-            variable=self.format_var, 
-            value="MP4",
-            command=self.update_quality_options
+        ctk.CTkLabel(
+            title_frame,
+            text="YouTube Downloader",
+            font=ctk.CTkFont(size=20, weight="bold"),
+            text_color="#FFFFFF"
         ).pack(side="left")
         
-        # Quality Selection (Right)
-        quality_container = ctk.CTkFrame(options_frame, fg_color="transparent")
-        quality_container.pack(side="right", fill="both", expand=True, padx=(5, 0))
+        # Main content area
+        content = ctk.CTkFrame(self.window, fg_color="#181818")
+        content.pack(fill="both", expand=True, padx=0, pady=0)
         
-        ctk.CTkLabel(quality_container, text="Quality:", font=ctk.CTkFont(size=12)).pack(anchor="w", pady=(0, 3))
+        inner_content = ctk.CTkFrame(content, fg_color="transparent")
+        inner_content.pack(fill="both", expand=True, padx=24, pady=24)
+        
+        # URL Input with YouTube styling
+        ctk.CTkLabel(
+            inner_content,
+            text="Video URL",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#AAAAAA",
+            anchor="w"
+        ).pack(anchor="w", pady=(0, 6))
+        
+        self.url_entry = ctk.CTkEntry(
+            inner_content,
+            placeholder_text="Paste YouTube link here...",
+            height=40,
+            border_width=1,
+            border_color="#303030",
+            fg_color="#212121",
+            text_color="#FFFFFF",
+            placeholder_text_color="#717171"
+        )
+        self.url_entry.pack(fill="x", pady=(0, 20))
+        
+        # Format and Quality row
+        options_row = ctk.CTkFrame(inner_content, fg_color="transparent")
+        options_row.pack(fill="x", pady=(0, 20))
+        
+        # Format section
+        format_section = ctk.CTkFrame(options_row, fg_color="transparent")
+        format_section.pack(side="left", fill="both", expand=True, padx=(0, 8))
+        
+        ctk.CTkLabel(
+            format_section,
+            text="Format",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#AAAAAA",
+            anchor="w"
+        ).pack(anchor="w", pady=(0, 6))
+        
+        format_frame = ctk.CTkFrame(format_section, fg_color="#212121", border_width=1, border_color="#303030")
+        format_frame.pack(fill="x")
+        
+        self.format_var = ctk.StringVar(value="MP3")
+        
+        mp3_btn = ctk.CTkRadioButton(
+            format_frame,
+            text="Audio (MP3)",
+            variable=self.format_var,
+            value="MP3",
+            command=self.update_quality_options,
+            fg_color="#FF0000",
+            hover_color="#CC0000",
+            text_color="#FFFFFF",
+            border_color="#505050"
+        )
+        mp3_btn.pack(side="left", padx=12, pady=10)
+        
+        mp4_btn = ctk.CTkRadioButton(
+            format_frame,
+            text="Video (MP4)",
+            variable=self.format_var,
+            value="MP4",
+            command=self.update_quality_options,
+            fg_color="#FF0000",
+            hover_color="#CC0000",
+            text_color="#FFFFFF",
+            border_color="#505050"
+        )
+        mp4_btn.pack(side="left", padx=12, pady=10)
+        
+        # Quality section
+        quality_section = ctk.CTkFrame(options_row, fg_color="transparent")
+        quality_section.pack(side="right", fill="both", expand=True, padx=(8, 0))
+        
+        ctk.CTkLabel(
+            quality_section,
+            text="Quality",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#AAAAAA",
+            anchor="w"
+        ).pack(anchor="w", pady=(0, 6))
         
         self.quality_var = ctk.StringVar(value="192 kbps")
         self.quality_menu = ctk.CTkOptionMenu(
-            quality_container,
+            quality_section,
             variable=self.quality_var,
             values=["128 kbps", "192 kbps", "256 kbps", "320 kbps"],
-            width=140
+            fg_color="#212121",
+            button_color="#303030",
+            button_hover_color="#404040",
+            dropdown_fg_color="#212121",
+            dropdown_hover_color="#303030",
+            text_color="#FFFFFF"
         )
         self.quality_menu.pack(fill="x")
         
-        # Output Directory
-        ctk.CTkLabel(main_frame, text="Save to:", font=ctk.CTkFont(size=12)).pack(anchor="w", pady=(0, 3))
+        # Save location
+        ctk.CTkLabel(
+            inner_content,
+            text="Save Location",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#AAAAAA",
+            anchor="w"
+        ).pack(anchor="w", pady=(0, 6))
         
-        dir_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        dir_frame.pack(fill="x", pady=(0, 12))
+        location_frame = ctk.CTkFrame(inner_content, fg_color="#212121", border_width=1, border_color="#303030")
+        location_frame.pack(fill="x", pady=(0, 20))
+        
+        location_inner = ctk.CTkFrame(location_frame, fg_color="transparent")
+        location_inner.pack(fill="x", padx=12, pady=10)
         
         self.dir_label = ctk.CTkLabel(
-            dir_frame, 
-            text=str(self.output_dir.absolute()),
-            font=ctk.CTkFont(size=10),
+            location_inner,
+            text=f"📁 {self.output_dir.name}",
+            font=ctk.CTkFont(size=12),
+            text_color="#AAAAAA",
             anchor="w"
         )
         self.dir_label.pack(side="left", fill="x", expand=True)
         
-        ctk.CTkButton(
-            dir_frame,
-            text="Browse",
-            width=80,
+        browse_btn = ctk.CTkButton(
+            location_inner,
+            text="Change",
+            width=70,
             height=28,
-            command=self.select_directory
-        ).pack(side="right", padx=(8, 0))
+            fg_color="#303030",
+            hover_color="#404040",
+            text_color="#FFFFFF",
+            command=self.select_directory,
+            corner_radius=4
+        )
+        browse_btn.pack(side="right")
         
-        # Progress
-        self.progress_bar = ctk.CTkProgressBar(main_frame)
+        # Progress section
+        self.progress_bar = ctk.CTkProgressBar(
+            inner_content,
+            progress_color="#FF0000",
+            fg_color="#303030"
+        )
         self.progress_bar.pack(fill="x", pady=(0, 8))
         self.progress_bar.set(0)
         
         self.status_label = ctk.CTkLabel(
-            main_frame,
-            text="Ready",
-            font=ctk.CTkFont(size=11)
+            inner_content,
+            text="Ready to download",
+            font=ctk.CTkFont(size=12),
+            text_color="#AAAAAA"
         )
-        self.status_label.pack(pady=(0, 12))
+        self.status_label.pack(pady=(0, 20))
         
-        # Download and Stop Buttons
-        button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        button_frame.pack(fill="x")
+        # Action buttons
+        button_container = ctk.CTkFrame(inner_content, fg_color="transparent")
+        button_container.pack()
         
         self.download_btn = ctk.CTkButton(
-            button_frame,
+            button_container,
             text="Download",
             font=ctk.CTkFont(size=14, weight="bold"),
-            height=38,
-            command=self.start_download
+            height=44,
+            width=200,
+            fg_color="#FF0000",
+            hover_color="#CC0000",
+            text_color="#FFFFFF",
+            command=self.start_download,
+            corner_radius=22
         )
-        self.download_btn.pack(side="left", fill="x", expand=True, padx=(0, 5))
+        self.download_btn.pack(side="left", padx=(0, 10))
         
         self.stop_btn = ctk.CTkButton(
-            button_frame,
-            text="Stop",
-            font=ctk.CTkFont(size=14, weight="bold"),
-            height=38,
+            button_container,
+            text="Cancel",
+            font=ctk.CTkFont(size=14),
+            height=44,
             width=100,
-            fg_color="red",
-            hover_color="darkred",
+            fg_color="#303030",
+            hover_color="#404040",
+            text_color="#FFFFFF",
             command=self.stop_download,
-            state="disabled"
+            state="disabled",
+            corner_radius=22
         )
-        self.stop_btn.pack(side="right")
+        self.stop_btn.pack(side="left")
         
     def update_quality_options(self):
         if self.format_var.get() == "MP3":
@@ -163,7 +253,7 @@ class YouTubeConverterGUI:
         directory = filedialog.askdirectory()
         if directory:
             self.output_dir = Path(directory)
-            self.dir_label.configure(text=str(self.output_dir.absolute()))
+            self.dir_label.configure(text=f"📁 {self.output_dir.name}")
     
     def progress_hook(self, d):
         if self.cancel_download:
@@ -173,7 +263,9 @@ class YouTubeConverterGUI:
             try:
                 percent = d.get('_percent_str', '0%').strip().replace('%', '')
                 self.progress_bar.set(float(percent) / 100)
-                self.status_label.configure(text=f"Downloading: {d.get('_percent_str', '0%')}")
+                speed = d.get('_speed_str', 'N/A')
+                eta = d.get('_eta_str', 'N/A')
+                self.status_label.configure(text=f"Downloading... {d.get('_percent_str', '0%')} • {speed} • ETA: {eta}")
             except:
                 pass
         elif d['status'] == 'finished':
@@ -229,14 +321,13 @@ class YouTubeConverterGUI:
                 
                 if not self.cancel_download:
                     self.window.after(0, lambda: self.progress_bar.set(1))
-                    self.window.after(0, lambda: self.status_label.configure(text=f"✓ Download complete!"))
-                    self.window.after(0, lambda: messagebox.showinfo("Success", f"Downloaded successfully!\n\nSaved to: {self.output_dir}"))
+                    self.window.after(0, lambda: self.status_label.configure(text="✓ Download complete!"))
+                    self.window.after(0, lambda: messagebox.showinfo("Success", f"Download complete!\n\nSaved to: {self.output_dir}"))
                 
         except Exception as e:
             if self.cancel_download:
                 self.window.after(0, lambda: self.progress_bar.set(0))
                 self.window.after(0, lambda: self.status_label.configure(text="Download cancelled"))
-                self.window.after(0, lambda: messagebox.showinfo("Cancelled", "Download stopped by user"))
             else:
                 self.window.after(0, lambda: messagebox.showerror("Error", f"Download failed:\n{str(e)}"))
                 self.window.after(0, lambda: self.progress_bar.set(0))
@@ -258,14 +349,13 @@ class YouTubeConverterGUI:
         self.stop_btn.configure(state="normal")
         self.progress_bar.set(0)
         
-        # Run download in separate thread
         thread = threading.Thread(target=self.download_video, daemon=True)
         thread.start()
     
     def stop_download(self):
         if self.downloading:
             self.cancel_download = True
-            self.status_label.configure(text="Stopping download...")
+            self.status_label.configure(text="Cancelling...")
             self.stop_btn.configure(state="disabled")
     
     def run(self):
