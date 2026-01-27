@@ -14,7 +14,7 @@ class YouTubeConverterGUI:
     def __init__(self):
         self.window = ctk.CTk()
         self.window.title("YouTube Downloader")
-        self.window.geometry("520x500")
+        self.window.geometry("520x540")
         self.window.resizable(False, False)
         
         # YouTube color scheme
@@ -85,9 +85,36 @@ class YouTubeConverterGUI:
         options_row = ctk.CTkFrame(inner_content, fg_color="transparent")
         options_row.pack(fill="x", pady=(0, 20))
         
-        # Format section
+        # Type Selection (Audio/Video)
+        type_section = ctk.CTkFrame(options_row, fg_color="transparent")
+        type_section.pack(side="left", fill="both", expand=True, padx=(0, 6))
+        
+        ctk.CTkLabel(
+            type_section,
+            text="Type",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#AAAAAA",
+            anchor="w"
+        ).pack(anchor="w", pady=(0, 6))
+        
+        self.type_var = ctk.StringVar(value="Audio")
+        self.type_menu = ctk.CTkOptionMenu(
+            type_section,
+            variable=self.type_var,
+            values=["Audio", "Video"],
+            fg_color="#212121",
+            button_color="#303030",
+            button_hover_color="#404040",
+            dropdown_fg_color="#212121",
+            dropdown_hover_color="#303030",
+            text_color="#FFFFFF",
+            command=self.update_format_options
+        )
+        self.type_menu.pack(fill="x")
+        
+        # Format Selection (Middle)
         format_section = ctk.CTkFrame(options_row, fg_color="transparent")
-        format_section.pack(side="left", fill="both", expand=True, padx=(0, 8))
+        format_section.pack(side="left", fill="both", expand=True, padx=(6, 6))
         
         ctk.CTkLabel(
             format_section,
@@ -97,40 +124,24 @@ class YouTubeConverterGUI:
             anchor="w"
         ).pack(anchor="w", pady=(0, 6))
         
-        format_frame = ctk.CTkFrame(format_section, fg_color="#212121", border_width=1, border_color="#303030")
-        format_frame.pack(fill="x")
-        
         self.format_var = ctk.StringVar(value="MP3")
-        
-        mp3_btn = ctk.CTkRadioButton(
-            format_frame,
-            text="Audio (MP3)",
+        self.format_menu = ctk.CTkOptionMenu(
+            format_section,
             variable=self.format_var,
-            value="MP3",
-            command=self.update_quality_options,
-            fg_color="#FF0000",
-            hover_color="#CC0000",
+            values=["MP3", "M4A", "WAV"],
+            fg_color="#212121",
+            button_color="#303030",
+            button_hover_color="#404040",
+            dropdown_fg_color="#212121",
+            dropdown_hover_color="#303030",
             text_color="#FFFFFF",
-            border_color="#505050"
+            command=self.update_quality_options
         )
-        mp3_btn.pack(side="left", padx=12, pady=10)
+        self.format_menu.pack(fill="x")
         
-        mp4_btn = ctk.CTkRadioButton(
-            format_frame,
-            text="Video (MP4)",
-            variable=self.format_var,
-            value="MP4",
-            command=self.update_quality_options,
-            fg_color="#FF0000",
-            hover_color="#CC0000",
-            text_color="#FFFFFF",
-            border_color="#505050"
-        )
-        mp4_btn.pack(side="left", padx=12, pady=10)
-        
-        # Quality section
+        # Quality Selection (Right)
         quality_section = ctk.CTkFrame(options_row, fg_color="transparent")
-        quality_section.pack(side="right", fill="both", expand=True, padx=(8, 0))
+        quality_section.pack(side="left", fill="both", expand=True, padx=(6, 0))
         
         ctk.CTkLabel(
             quality_section,
@@ -241,12 +252,30 @@ class YouTubeConverterGUI:
         )
         self.stop_btn.pack(side="left")
         
-    def update_quality_options(self):
-        if self.format_var.get() == "MP3":
+    def update_format_options(self, choice=None):
+        """Update format dropdown based on audio/video selection"""
+        if self.type_var.get() == "Audio":
+            self.format_menu.configure(values=["MP3", "M4A", "WAV"])
+            self.format_var.set("MP3")
+        else:  # Video
+            self.format_menu.configure(values=["MP4", "WEBM", "MKV"])
+            self.format_var.set("MP4")
+        self.update_quality_options()
+    
+    def update_quality_options(self, choice=None):
+        format_type = self.format_var.get()
+        
+        if format_type == "MP3":
             self.quality_menu.configure(values=["128 kbps", "192 kbps", "256 kbps", "320 kbps"])
             self.quality_var.set("192 kbps")
-        else:
-            self.quality_menu.configure(values=["360p", "480p", "720p", "1080p", "Best"])
+        elif format_type == "M4A":
+            self.quality_menu.configure(values=["128 kbps", "192 kbps", "256 kbps", "320 kbps"])
+            self.quality_var.set("192 kbps")
+        elif format_type == "WAV":
+            self.quality_menu.configure(values=["Lossless"])
+            self.quality_var.set("Lossless")
+        elif format_type in ["MP4", "WEBM", "MKV"]:
+            self.quality_menu.configure(values=["360p", "480p", "720p", "1080p", "1440p", "2160p (4K)", "Best"])
             self.quality_var.set("720p")
     
     def select_directory(self):
@@ -261,16 +290,32 @@ class YouTubeConverterGUI:
             
         if d['status'] == 'downloading':
             try:
-                percent = d.get('_percent_str', '0%').strip().replace('%', '')
-                self.progress_bar.set(float(percent) / 100)
+                # Get percentage
+                if '_percent_str' in d:
+                    percent_str = d['_percent_str'].strip()
+                    percent = float(percent_str.replace('%', ''))
+                    self.window.after(0, lambda p=percent: self.progress_bar.set(p / 100))
+                
+                # Get download info
                 speed = d.get('_speed_str', 'N/A')
                 eta = d.get('_eta_str', 'N/A')
-                self.status_label.configure(text=f"Downloading... {d.get('_percent_str', '0%')} • {speed} • ETA: {eta}")
-            except:
-                pass
+                downloaded = d.get('_downloaded_bytes_str', '')
+                total = d.get('_total_bytes_str', '')
+                
+                # Update status
+                if downloaded and total:
+                    status_text = f"Downloading... {percent_str} ({downloaded}/{total}) • {speed} • ETA: {eta}"
+                else:
+                    status_text = f"Downloading... {percent_str} • {speed} • ETA: {eta}"
+                
+                self.window.after(0, lambda t=status_text: self.status_label.configure(text=t))
+            except Exception as e:
+                # Fallback for any parsing errors
+                self.window.after(0, lambda: self.status_label.configure(text="Downloading..."))
+                
         elif d['status'] == 'finished':
-            self.progress_bar.set(1)
-            self.status_label.configure(text="Processing...")
+            self.window.after(0, lambda: self.progress_bar.set(1))
+            self.window.after(0, lambda: self.status_label.configure(text="Processing... Converting to final format"))
     
     def download_video(self):
         url = self.url_entry.get().strip()
@@ -286,9 +331,9 @@ class YouTubeConverterGUI:
         quality = self.quality_var.get()
         
         try:
+            # Audio formats
             if format_type == "MP3":
                 quality_value = quality.split()[0]
-                
                 ydl_opts = {
                     'format': 'bestaudio/best',
                     'postprocessors': [{
@@ -299,18 +344,48 @@ class YouTubeConverterGUI:
                     'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
                     'progress_hooks': [self.progress_hook],
                 }
+            
+            elif format_type == "M4A":
+                quality_value = quality.split()[0]
+                ydl_opts = {
+                    'format': 'bestaudio/best',
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'm4a',
+                        'preferredquality': quality_value,
+                    }],
+                    'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
+                    'progress_hooks': [self.progress_hook],
+                }
+            
+            elif format_type == "WAV":
+                ydl_opts = {
+                    'format': 'bestaudio/best',
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'wav',
+                    }],
+                    'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
+                    'progress_hooks': [self.progress_hook],
+                }
+            
+            # Video formats
             else:
                 quality_map = {
                     '360p': 'bestvideo[height<=360]+bestaudio/best[height<=360]',
                     '480p': 'bestvideo[height<=480]+bestaudio/best[height<=480]',
                     '720p': 'bestvideo[height<=720]+bestaudio/best[height<=720]',
                     '1080p': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+                    '1440p': 'bestvideo[height<=1440]+bestaudio/best[height<=1440]',
+                    '2160p (4K)': 'bestvideo[height<=2160]+bestaudio/best[height<=2160]',
                     'Best': 'bestvideo+bestaudio/best'
                 }
                 
+                format_extension = format_type.lower()
+                
                 ydl_opts = {
                     'format': quality_map.get(quality, quality_map['720p']),
-                    'merge_output_format': 'mp4',
+                    'merge_output_format': format_extension,
                     'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
                     'progress_hooks': [self.progress_hook],
                 }
