@@ -1,121 +1,54 @@
-YouTube Downloader (CustomTkinter + yt-dlp)
+# YouTube Downloader
 
-A modern, clean YouTube downloader built with Python, CustomTkinter, and yt-dlp.
-This application lets you download YouTube videos or audio in multiple formats and qualities with a YouTube-styled dark mode interface.
+A modern YouTube downloader built with Python, CustomTkinter, and yt-dlp. Download audio or video in multiple formats and qualities with a YouTube-styled dark interface.
 
-✨ Features
+## Features
 
-YouTube-style dark UI
+- Download **Audio** (MP3, M4A, WAV) or **Video** (MP4, WEBM, MKV)
+- Audio quality: 128–320 kbps or Lossless (WAV)
+- Video quality: 360p to 4K
+- Real-time progress bar showing percentage and download speed
+- Paste button for quick URL input
+- Remembers your last save directory across sessions
+- On completion: save folder opens and file plays automatically in your default media player
+- Cancellable downloads with responsive UI (multithreaded)
 
-Download Audio (MP3, M4A, WAV) or Video (MP4, WEBM, MKV)
+## Requirements
 
-Audio quality options: 128–320 kbps or Lossless
+- Python 3.8+
+- [FFmpeg](https://ffmpeg.org/) — must be installed and available in PATH
 
-Video quality options: 360p to 4K
+## Installation
 
-Real-time download progress, speed, ETA, and file size
-
-Multithreaded downloads (GUI remains responsive)
-
-Cancel downloads anytime
-
-Select custom save directory
-
-Automatic post-processing via FFmpeg
-
-Full error handling and user notifications
-
-🛠️ Technologies Used
-
-Python 3
-
-CustomTkinter
-
-yt-dlp
-
-FFmpeg
-
-📦 Installation
-1. Clone the repository
+```bash
 git clone https://github.com/your-username/youtube-downloader.git
 cd youtube-downloader
+pip install -r requirements.txt
+```
 
-2. Install required packages
-pip install customtkinter yt-dlp
+**Install FFmpeg:**
 
-3. Install FFmpeg
+| Platform | Command |
+|----------|---------|
+| Windows  | Download from [ffmpeg.org](https://ffmpeg.org/) and add to PATH |
+| macOS    | `brew install ffmpeg` |
+| Linux    | `sudo apt install ffmpeg` |
 
-FFmpeg is required for audio extraction and video merging.
+## Usage
 
-Windows: Download from ffmpeg.org and add to PATH
-macOS:
+```bash
+python youtube_downloader.py
+```
 
-brew install ffmpeg
+1. Paste a YouTube URL (or use the **Paste** button)
+2. Select Type → Format → Quality
+3. Optionally change the save directory
+4. Click **Download** — when done, the folder and file open automatically
 
+## Keeping yt-dlp up to date
 
-Linux:
+YouTube frequently changes its API. If downloads fail, update yt-dlp first:
 
-sudo apt install ffmpeg
-
-🚀 Running the Application
-python main.py
-
-📁 Project Structure
-.
-│── main.py
-│── downloads/        # Default download location (auto-created)
-│── README.md
-
-⚙️ How the App Works
-
-Enter a YouTube URL
-
-Select Type (Audio/Video)
-
-Select Format
-
-Choose Quality
-
-Pick a save directory (optional)
-
-Click Download
-
-Progress bar updates in real-time
-
-Shows speed, ETA, and percentage
-
-Download can be cancelled anytime
-
-🧩 Key Code Features
-
-Threading keeps the UI responsive during downloads
-
-yt-dlp progress hooks update the UI with progress and speed
-
-Dynamic dropdowns adapt to the selected type and format
-
-Graceful cancellation of downloads
-
-Error handling for missing URLs, invalid links, FFmpeg issues, and more
-
-🛡️ Error Handling
-
-The app provides clear alerts for:
-
-Invalid or missing URLs
-
-Failed downloads
-
-Missing FFmpeg
-
-User-cancelled downloads
-
-Conversion or merge errors
-
-🤝 Contributing
-
-Contributions, ideas, and improvements are welcome.
-
-📜 License
-
-This project is licensed under the MIT License.
+```bash
+pip install -U yt-dlp
+```
