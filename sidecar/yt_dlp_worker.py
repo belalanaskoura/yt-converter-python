@@ -75,9 +75,12 @@ _COMMON_OPTS = {
     # yt-dlp errors still come through via the progress_hook exception path.
     "quiet": True,
     "noprogress": True,
-    # Download up to 5 fragments in parallel — YouTube uses DASH/HLS which
+    # Download up to 16 fragments in parallel — YouTube uses DASH/HLS which
     # delivers video/audio as many small fragments; sequential download is slow.
-    "concurrent_fragment_downloads": 5,
+    "concurrent_fragment_downloads": 16,
+    # Download in 10 MB chunks instead of the default small chunks — reduces
+    # per-request overhead and saturates bandwidth more effectively.
+    "http_chunk_size": 10485760,
     # Increase timeouts and retries to handle slow/flaky connections.
     "socket_timeout": 60,
     "retries": 10,
