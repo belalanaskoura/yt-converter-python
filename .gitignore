@@ -4,8 +4,9 @@ config.json
 # Downloaded media files
 downloads/
 
-# Claude Code memory and settings (CLAUDE.md is committed at root, not here)
+# Claude Code files (local only)
 .claude/
+CLAUDE.md
 
 # Python cache
 __pycache__/
