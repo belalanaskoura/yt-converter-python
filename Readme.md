@@ -1,29 +1,27 @@
-# YouTube Downloader
+# Link to Media
 
-A modern YouTube downloader built with Python, CustomTkinter, and yt-dlp. Download audio or video in multiple formats and qualities with a YouTube-styled dark interface.
+A desktop YouTube downloader built with Tauri 2.0, React, and yt-dlp. Download audio or video in multiple formats and qualities with a clean dark interface.
 
 ## Features
 
 - Download **Audio** (MP3, M4A, WAV) or **Video** (MP4, WEBM, MKV)
 - Audio quality: 128–320 kbps or Lossless (WAV)
 - Video quality: 360p to 4K
-- Real-time progress bar showing percentage and download speed
+- Real-time progress bar with percentage and download speed
+- Download history stored locally with SQLite
 - Paste button for quick URL input
 - Remembers your last save directory across sessions
-- On completion: save folder opens and file plays automatically in your default media player
-- Cancellable downloads with responsive UI (multithreaded)
+- Cancellable downloads
 
 ## Requirements
 
-- Python 3.8+
-- [FFmpeg](https://ffmpeg.org/) — must be installed and available in PATH
-
-## Installation
+- [Rust](https://rustup.rs/) (stable toolchain)
+- [Node.js](https://nodejs.org/) 18+
+- Python 3.8+ with [yt-dlp](https://github.com/yt-dlp/yt-dlp) installed
+- [FFmpeg](https://ffmpeg.org/) — must be in PATH
 
 ```bash
-git clone https://github.com/your-username/youtube-downloader.git
-cd youtube-downloader
-pip install -r requirements.txt
+pip install yt-dlp
 ```
 
 **Install FFmpeg:**
@@ -34,20 +32,37 @@ pip install -r requirements.txt
 | macOS    | `brew install ffmpeg` |
 | Linux    | `sudo apt install ffmpeg` |
 
-## Usage
+## Installation
 
 ```bash
-python youtube_downloader.py
+git clone https://github.com/your-username/Link_to_Media.git
+cd Link_to_Media/tauri-app
+npm install
 ```
+
+## Running
+
+```bash
+# From the repo root — double-click or run in terminal
+run_app.bat
+
+# Or manually
+cd tauri-app
+npm run tauri dev
+```
+
+The first run compiles the Rust backend (~1–2 min). Subsequent runs are fast.
+
+## Usage
 
 1. Paste a YouTube URL (or use the **Paste** button)
 2. Select Type → Format → Quality
-3. Optionally change the save directory
-4. Click **Download** — when done, the folder and file open automatically
+3. Optionally change the save directory (defaults to your system's Downloads folder)
+4. Click **Download**
 
 ## Keeping yt-dlp up to date
 
-YouTube frequently changes its API. If downloads fail, update yt-dlp first:
+YouTube frequently changes its API. If downloads fail, update yt-dlp:
 
 ```bash
 pip install -U yt-dlp

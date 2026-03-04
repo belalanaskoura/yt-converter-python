@@ -1,0 +1,27 @@
+# Local config (persists user's last save directory)
+config.json
+
+# Downloaded media files
+downloads/
+
+# Claude Code memory and settings (CLAUDE.md is committed at root, not here)
+.claude/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
