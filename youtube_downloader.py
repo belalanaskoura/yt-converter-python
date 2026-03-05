@@ -310,12 +310,12 @@ class YouTubeConverterGUI:
 
     # ── yt-dlp opts builders ─────────────────────────────────────────────────
 
-    # Use the android client to avoid JS-runtime requirement and YouTube's
-    # SABR streaming restriction that causes 403 errors with web clients.
-    # android client: bypasses JS requirement and SABR restriction — ideal for audio
+    # Use the ios client to avoid JS-runtime requirement and YouTube's
+    # SABR streaming restriction. android now requires a GVS PO Token for https
+    # formats (as of early 2026); ios still bypasses this without a token.
     # Video uses yt-dlp's default client selection (no restriction) so it can
     # fall back across clients automatically as YouTube changes requirements.
-    _AUDIO_EXTRACTOR_ARGS = {"extractor_args": {"youtube": {"player_client": ["android"]}}}
+    _AUDIO_EXTRACTOR_ARGS = {"extractor_args": {"youtube": {"player_client": ["ios"]}}}
 
     def _audio_opts(self, codec, quality=None):
         pp = {"key": "FFmpegExtractAudio", "preferredcodec": codec}

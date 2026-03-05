@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatRelativeTime } from "@/lib/utils";
 import type { HistoryEntry } from "@/lib/types";
+import logoImage from "@/assets/logo.png";
 
 const AUDIO_FORMATS = ["MP3", "M4A", "WAV"];
 
@@ -127,11 +128,7 @@ export function Sidebar({ history, onDeleteEntry, onClearAll }: SidebarProps) {
     <aside className="flex flex-col h-full w-72 shrink-0 border-r border-[oklch(0.18_0.006_285)] bg-[oklch(0.105_0.006_285)]">
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-4 py-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 shadow-lg shadow-red-900/40">
-          <svg viewBox="0 0 24 24" fill="white" className="h-4 w-4">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </div>
+        <img src={logoImage} alt="FetchIt" className="h-8 w-8 rounded-lg" />
         <div>
           <p className="text-sm font-bold text-white leading-none">FetchIt</p>
           <p className="text-xs text-[oklch(0.45_0.008_285)] mt-0.5">YouTube Downloader</p>
