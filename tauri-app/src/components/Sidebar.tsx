@@ -87,7 +87,7 @@ function HistoryItem({ entry, index, onDelete }: { entry: HistoryEntry; index: n
         </div>
         {/* Delete button — always visible */}
         <button
-          className="shrink-0 mt-0.5 text-[oklch(0.35_0.006_285)] hover:text-red-400 transition-colors"
+          className="shrink-0 mt-0.5 text-[oklch(0.45_0.008_285)] hover:text-red-400 transition-colors"
           onClick={() => entry.id != null && onDelete(entry.id)}
           title="Remove from history"
         >
